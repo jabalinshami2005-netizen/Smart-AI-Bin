@@ -11,9 +11,25 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 }
 
-const app = initializeApp(firebaseConfig)
-const auth = getAuth(app)
-const db = getFirestore(app)
-const googleProvider = new GoogleAuthProvider()
+const initialized = Boolean(
+  firebaseConfig.apiKey &&
+  firebaseConfig.authDomain &&
+  firebaseConfig.projectId &&
+  firebaseConfig.appId
+)
 
-export { auth, db, googleProvider }
+let app = null
+let auth = null
+let db = null
+let googleProvider = null
+
+if (initialized) {
+  app = initializeApp(firebaseConfig)
+  auth = getAuth(app)
+  db = getFirestore(app)
+  googleProvider = new GoogleAuthProvider()
+} else {
+  console.warn('Firebase is not configured. Set VITE_FIREBASE_* variables in .env.local to enable Firebase features.')
+}
+
+export { auth, db, googleProvider, initialized }
